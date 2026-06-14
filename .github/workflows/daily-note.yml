@@ -2,7 +2,7 @@ name: Daily Note
 
 on:
   schedule:
-    - cron: "20 6 * * *" # 13:20 WIB
+    - cron: "0 8 * * *" # 15:00 WIB
   workflow_dispatch:
   
 permissions:
