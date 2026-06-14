@@ -1,0 +1,58 @@
+name: Daily Note
+
+on:
+  schedule:
+    - cron: "30 16 * * *" # 23:30 WIB
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  create-daily-note:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create daily note
+        run: |
+          TODAY=$(TZ='Asia/Jakarta' date +'%Y-%m-%d')
+          FILE="logs/$TODAY.md"
+
+          mkdir -p logs
+
+          if [ ! -f "$FILE" ]; then
+            cat > "$FILE" <<EOF
+          # $TODAY
+
+          ## Yang dipelajari
+          -
+
+          ## Masalah yang diselesaikan
+          -
+
+          ## Progress proyek
+          -
+
+          ## Rencana besok
+          -
+          EOF
+          else
+            echo "Daily note already exists."
+          fi
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "ArcNasss"
+          git config user.email "nasrililhamsa@gmail.com"
+
+          git add logs/
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Add daily note for $(TZ='Asia/Jakarta' date +'%Y-%m-%d')"
+            git push
+          fi
